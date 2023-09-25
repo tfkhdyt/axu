@@ -94,7 +94,11 @@ export function formatResult(commonLines: string[]) {
 export function printResult(updateTypeMap: UpdateTypeMap) {
   for (const [key, value] of Object.entries(updateTypeMap)) {
     if (value.length > 0) {
-      console.log(chalk.bold.underline(key.toUpperCase()));
+      console.log(
+        chalk.bold.underline(key.toUpperCase()),
+        chalk.greenBright(`(${value.length})`),
+        '     ',
+      );
       value.forEach((it) => console.log(it));
       console.log();
     }
