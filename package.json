@@ -1,17 +1,22 @@
 {
   "name": "axu",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A cli tool to check your Arch Linux explicitly installed packages updates",
   "type": "module",
   "license": "ISC",
   "scripts": {
     "lint": "eslint --fix ./src/",
     "build": "tsc",
-    "start": "node ./dist/main.js"
+    "start": "node ./dist/main.js",
+    "release": "pnpx bumpp && pnpm publish --no-git-checks"
   },
   "bin": {
     "axu": "bin/axu.js"
   },
+  "files": [
+    "dist",
+    "bin"
+  ],
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
