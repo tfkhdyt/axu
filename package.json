@@ -1,6 +1,6 @@
 {
   "name": "axu",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A cli tool to check your Arch Linux explicitly installed packages updates",
   "type": "module",
   "license": "ISC",
