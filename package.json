@@ -11,8 +11,7 @@
     "release": "pnpx bumpp && pnpm publish --no-git-checks"
   },
   "bin": {
-    "axu": "bin/axu.js",
-    "axu-bun": "bin/axu-bun.js"
+    "axu": "bin/axu.js"
   },
   "files": [
     "dist",
