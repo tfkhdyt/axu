@@ -1,6 +1,6 @@
 {
   "name": "axu",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A cli tool to check your Arch Linux explicitly installed packages updates",
   "type": "module",
   "license": "ISC",
@@ -11,7 +11,8 @@
     "release": "pnpx bumpp && pnpm publish --no-git-checks"
   },
   "bin": {
-    "axu": "bin/axu.js"
+    "axu": "bin/axu.js",
+    "axu-bun": "bin/axu-bun.js"
   },
   "files": [
     "dist",
