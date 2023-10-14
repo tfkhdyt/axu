@@ -23,6 +23,20 @@ yay -S axu
 
 ### Usage
 
+#### Show all explicit updates
+
 ```bash
 axu
+```
+
+#### Show number of updates
+
+```bash
+axu -n
+```
+
+#### Show major updates only
+
+```bash
+axu major # possible values [major, minor, patch, build]
 ```
