@@ -16,6 +16,7 @@ panic = "abort"
 
 [dependencies]
 clap = { version = "4.4.6", features = ["derive"] }
+clap_complete = "4.4.3"
 colored = "2.0.4"
 duct = "0.13.6"
 rayon = "1.8.0"

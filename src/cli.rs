@@ -1,4 +1,5 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
+use clap_complete::shells;
 
 use crate::updates::UpdateType;
 
@@ -11,4 +12,13 @@ pub struct Cli {
     /// Show number of updates only
     #[arg(short, long)]
     pub number: bool,
+
+    #[command(subcommand)]
+    pub command: Option<Commands>,
+}
+
+#[derive(Subcommand)]
+pub enum Commands {
+    /// Generate shell completions
+    Generate { shell: shells::Shell },
 }

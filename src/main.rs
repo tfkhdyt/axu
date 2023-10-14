@@ -5,13 +5,24 @@ mod updates;
 mod utils;
 mod versions;
 
-use clap::Parser;
+use std::process;
+
+use clap::{CommandFactory, Parser};
 use spinners::{Spinner, Spinners};
 
-use crate::utils::{fmt, lines};
+use crate::{
+    cli::Commands,
+    utils::{completions, fmt, lines},
+};
 
 fn main() {
     let cli = cli::Cli::parse();
+
+    if let Some(Commands::Generate { shell }) = &cli.command {
+        let mut cmd = cli::Cli::command();
+        completions::print_completions(*shell, &mut cmd);
+        process::exit(0);
+    }
 
     let mut sp = Spinner::new(Spinners::Pong, "Loading".into());
 
