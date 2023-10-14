@@ -6,23 +6,23 @@
 
 ### Pre-requisites
 
-- Node.js
-- Node.js Package Manager (npm, yarn, pnpm, bun)
 - Arch Linux
 - `pacman-contrib`
 - `yay`
 - `gawk`
 - `coreutils`
+- Rust (make deps)
+
+### Installation
+
+#### AUR
+
+```bash
+yay -S axu
+```
 
 ### Usage
 
 ```bash
-# pnpm
-pnpx axu
-
-# npm
-npx axu
-
-# bun
-bunx axu
+axu
 ```
