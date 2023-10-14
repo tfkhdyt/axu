@@ -20,5 +20,5 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     /// Generate shell completions
-    Generate { shell: shells::Shell },
+    Completion { shell: shells::Shell },
 }

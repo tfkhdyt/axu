@@ -18,7 +18,7 @@ use crate::{
 fn main() {
     let cli = cli::Cli::parse();
 
-    if let Some(Commands::Generate { shell }) = &cli.command {
+    if let Some(Commands::Completion { shell }) = &cli.command {
         let mut cmd = cli::Cli::command();
         completions::print_completions(*shell, &mut cmd);
         process::exit(0);
