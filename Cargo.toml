@@ -1,6 +1,6 @@
 [package]
 name = "axu"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -16,3 +16,4 @@ panic = "abort"
 colored = "2.0.4"
 duct = "0.13.6"
 rayon = "1.8.0"
+spinners = "4.1.0"

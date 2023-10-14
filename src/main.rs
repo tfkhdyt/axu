@@ -5,10 +5,13 @@ mod utils;
 mod versions;
 
 use colored::*;
+use spinners::{Spinner, Spinners};
 
 use crate::utils::{fmt, lines};
 
 fn main() {
+    let mut sp = Spinner::new(Spinners::Pong, "Loading".into());
+
     let (all_updates, explicit_packages) =
         rayon::join(updates::get_all_updates, packages::get_explicit_packages);
 
@@ -24,7 +27,9 @@ fn main() {
     let common_lines = lines::get_common_lines(all_updates, explicit_packages);
     let result = results::format_result(&common_lines);
 
-    results::print_result(result);
+    sp.stop();
+    print!("\x1b[2K\r");
 
+    results::print_result(result);
     println!("{} {}", "Total updates:".bold(), common_lines.len());
 }
