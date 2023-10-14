@@ -17,11 +17,19 @@ fn main() {
 
     let all_updates = match all_updates {
         Ok(v) => v,
-        Err(err) => fmt::fatalln("failed to get all updates", Some(&err)),
+        Err(err) => {
+            sp.stop();
+            print!("\x1b[2K\r");
+            fmt::fatalln("failed to get all updates", Some(&err))
+        }
     };
     let explicit_packages = match explicit_packages {
         Ok(v) => v,
-        Err(err) => fmt::fatalln("failed to get explicit packages", Some(&err)),
+        Err(err) => {
+            sp.stop();
+            print!("\x1b[2K\r");
+            fmt::fatalln("failed to get explicit packages", Some(&err))
+        }
     };
 
     let common_lines = lines::get_common_lines(all_updates, explicit_packages);
