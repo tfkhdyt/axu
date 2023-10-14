@@ -3,11 +3,13 @@ use std::{
     sync::{Arc, Mutex},
 };
 
+use clap::ValueEnum;
 use duct::cmd;
 use rayon::prelude::*;
 
 use crate::utils::parsing;
 
+#[derive(ValueEnum, Clone, PartialEq, PartialOrd)]
 pub enum UpdateType {
     Major,
     Minor,

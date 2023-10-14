@@ -1,15 +1,18 @@
+mod cli;
 mod packages;
 mod results;
 mod updates;
 mod utils;
 mod versions;
 
-use colored::*;
+use clap::Parser;
 use spinners::{Spinner, Spinners};
 
 use crate::utils::{fmt, lines};
 
 fn main() {
+    let cli = cli::Cli::parse();
+
     let mut sp = Spinner::new(Spinners::Pong, "Loading".into());
 
     let (all_updates, explicit_packages) =
@@ -33,11 +36,10 @@ fn main() {
     };
 
     let common_lines = lines::get_common_lines(all_updates, explicit_packages);
-    let result = results::format_result(&common_lines);
+    let result = results::format_result(&common_lines, &cli.update_type);
 
     sp.stop();
     print!("\x1b[2K\r");
 
-    results::print_result(result);
-    println!("{} {}", "Total updates:".bold(), common_lines.len());
+    results::print_result(result, cli.number);
 }

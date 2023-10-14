@@ -1,6 +1,8 @@
 [package]
 name = "axu"
-version = "1.1.0"
+version = "1.2.0"
+authors = ["tfkhdyt <tfkhdyt@proton.me"]
+description = "A cli tool to check your Arch Linux explicitly installed packages updates"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -13,6 +15,7 @@ codegen-units = 1
 panic = "abort"
 
 [dependencies]
+clap = { version = "4.4.6", features = ["derive"] }
 colored = "2.0.4"
 duct = "0.13.6"
 rayon = "1.8.0"
