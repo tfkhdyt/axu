@@ -18,7 +18,7 @@ fn main() {
     };
     let explicit_packages = match explicit_packages {
         Ok(v) => v,
-        Err(err) => fmt::fatalln("Failed to get explicit packages", Some(&err)),
+        Err(err) => fmt::fatalln("failed to get explicit packages", Some(&err)),
     };
 
     let common_lines = lines::get_common_lines(all_updates, explicit_packages);
