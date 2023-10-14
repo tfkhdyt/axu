@@ -1,0 +1,45 @@
+permissions:
+  contents: write
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/create-gh-release-action@v1
+        with:
+          # (required) GitHub token for creating GitHub Releases.
+          token: ${{ secrets.GITHUB_TOKEN }}
+  upload-assets:
+    needs:
+      - create-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/upload-rust-binary-action@v1
+        with:
+          # (required) Comma-separated list of binary names (non-extension portion of filename) to build and upload.
+          # Note that glob pattern is not supported yet.
+          bin: axu
+          archive: $bin-$tag
+          # (required) GitHub token for uploading assets to GitHub Releases.
+          token: ${{ secrets.GITHUB_TOKEN }}
+  aur-publish:
+    needs:
+      - upload-assets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Publish AUR package
+        uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
+        with:
+          pkgname: axu
+          pkgbuild: ./PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: Update AUR package
+          ssh_keyscan_types: rsa,dsa,ecdsa,ed25519
