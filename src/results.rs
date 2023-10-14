@@ -48,65 +48,32 @@ pub fn format_result(
 
 pub fn print_result(update_type_map: UpdateTypeMap, show_number_only: bool) {
     let mut number_of_updates = 0;
+    let updates_types = [
+        &update_type_map.major,
+        &update_type_map.minor,
+        &update_type_map.patch,
+        &update_type_map.build,
+    ];
 
-    if !update_type_map.major.is_empty() {
-        number_of_updates += update_type_map.major.len();
-        if !show_number_only {
-            println!(
-                "{} ({})",
-                "MAJOR".bold().underline(),
-                update_type_map.major.len().to_string().bright_green(),
-            );
-            update_type_map
-                .major
-                .iter()
-                .for_each(|it| println!("{}", it));
-            println!();
-        }
-    }
-    if !update_type_map.minor.is_empty() {
-        number_of_updates += update_type_map.minor.len();
-        if !show_number_only {
-            println!(
-                "{} ({})",
-                "MINOR".bold().underline(),
-                update_type_map.minor.len().to_string().bright_green(),
-            );
-            update_type_map
-                .minor
-                .iter()
-                .for_each(|it| println!("{}", it));
-            println!();
-        }
-    }
-    if !update_type_map.patch.is_empty() {
-        number_of_updates += update_type_map.patch.len();
-        if !show_number_only {
-            println!(
-                "{} ({})",
-                "PATCH".bold().underline(),
-                update_type_map.patch.len().to_string().bright_green(),
-            );
-            update_type_map
-                .patch
-                .iter()
-                .for_each(|it| println!("{}", it));
-            println!();
-        }
-    }
-    if !update_type_map.build.is_empty() {
-        number_of_updates += update_type_map.build.len();
-        if !show_number_only {
-            println!(
-                "{} ({})",
-                "BUILD".bold().underline(),
-                update_type_map.build.len().to_string().bright_green(),
-            );
-            update_type_map
-                .build
-                .iter()
-                .for_each(|it| println!("{}", it));
-            println!();
+    for (idx, update_type) in updates_types.iter().enumerate() {
+        if !update_type.is_empty() {
+            number_of_updates += update_type.len();
+            if !show_number_only {
+                println!(
+                    "{} ({})",
+                    match idx {
+                        0 => "MAJOR",
+                        1 => "MINOR",
+                        2 => "PATCH",
+                        _ => "BUILD",
+                    }
+                    .bold()
+                    .underline(),
+                    update_type.len().to_string().bright_green(),
+                );
+                update_type.iter().for_each(|it| println!("{}", it));
+                println!();
+            }
         }
     }
 
