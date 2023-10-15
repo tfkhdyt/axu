@@ -4,7 +4,6 @@ use std::{
 };
 
 use clap::ValueEnum;
-use duct::cmd;
 use rayon::prelude::*;
 
 use crate::utils::parsing;
@@ -23,7 +22,7 @@ pub fn get_all_updates() -> io::Result<Vec<String>> {
         |e| io::Error::new(io::ErrorKind::Other, format!("mutex lock error: {:?}", e));
 
     let updates = Arc::new(Mutex::new(vec![]));
-    let commands = [cmd!("checkupdates"), cmd!("yay", "-Qua")];
+    let commands = [duct::cmd!("checkupdates"), duct::cmd!("yay", "-Qua")];
 
     commands.par_iter().try_for_each(|cmd| -> io::Result<()> {
         let update = cmd.read()?;

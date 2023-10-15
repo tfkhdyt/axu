@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use clap_complete::shells;
+use clap_complete::Shell;
 
 use crate::updates::UpdateType;
 
@@ -20,5 +20,5 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     /// Generate shell completions
-    Completion { shell: shells::Shell },
+    Completion { shell: Shell },
 }
