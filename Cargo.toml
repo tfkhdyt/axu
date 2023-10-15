@@ -1,10 +1,9 @@
 [package]
 name = "axu"
-version = "1.3.1"
+version = "1.4.0"
 authors = ["Taufik Hidayat <tfkhdyt@proton.me>"]
 description = "A cli tool to check your Arch Linux explicitly installed packages updates"
 edition = "2021"
-licence = "GPL-3.0-only"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
