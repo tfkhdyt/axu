@@ -10,10 +10,7 @@ pub struct UpdateTypeMap {
     pub build: Vec<String>,
 }
 
-pub fn format_result(
-    common_lines: &Vec<String>,
-    update_types: &Option<Vec<UpdateType>>,
-) -> UpdateTypeMap {
+pub fn format_result(common_lines: &Vec<String>, update_types: &Vec<UpdateType>) -> UpdateTypeMap {
     let mut update_type_map = UpdateTypeMap::default();
 
     for line in common_lines {
@@ -24,10 +21,8 @@ pub fn format_result(
         let new_version = ln[3];
 
         let update_type = versions::compare_version(old_version, new_version);
-        if let Some(update_type_arg) = update_types {
-            if !update_type_arg.contains(&update_type) {
-                continue;
-            }
+        if !update_types.is_empty() && !update_types.contains(&update_type) {
+            continue;
         }
         let vec = match update_type {
             UpdateType::Major => &mut update_type_map.major,
