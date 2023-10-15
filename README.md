@@ -1,6 +1,6 @@
 # Arch linux eXplicit Updates
 
-[![asciicast](https://asciinema.org/a/614450.svg)](https://asciinema.org/a/614450)
+[![asciicast](https://asciinema.org/a/614481.svg)](https://asciinema.org/a/614481)
 
 `axu` is a cli tool to check your Arch Linux explicitly installed packages updates. Inspired by [@antfu/taze](https://github.com/antfu/taze), but for Arch Linux
 
