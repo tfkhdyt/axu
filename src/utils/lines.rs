@@ -1,18 +1,21 @@
-pub fn get_common_lines(left: Vec<String>, right: Vec<String>) -> Vec<String> {
-    let mut common_lines: Vec<String> = Vec::new();
-    let (mut i, mut j) = (0, 0);
+use rayon::prelude::*;
 
-    while i < left.len() && j < right.len() {
-        if left[i].contains(&right[j]) {
-            common_lines.push(left[i].to_owned());
-            i += 1;
-            j += 1;
-        } else if left[i] < right[j] {
-            i += 1;
-        } else {
-            j += 1;
-        }
-    }
+pub fn get_common_lines(left: Vec<String>, right: Vec<String>) -> Vec<String> {
+    let common_lines: Vec<String> = left
+        .par_iter()
+        .filter_map(|x| {
+            let string_vec = x.split_whitespace().collect::<Vec<&str>>();
+            if let Some(first) = string_vec.first() {
+                if right.contains(&first.to_string()) {
+                    Some(x.to_string())
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        })
+        .collect();
 
     common_lines
 }
