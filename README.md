@@ -20,7 +20,7 @@
 #### AUR
 
 ```bash
-yay -S axu
+yay -S axu-bin
 ```
 
 ### Usage
