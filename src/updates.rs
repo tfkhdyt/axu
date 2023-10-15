@@ -15,6 +15,7 @@ pub enum UpdateType {
     Minor,
     Patch,
     Build,
+    Git,
 }
 
 pub fn get_all_updates() -> io::Result<Vec<String>> {

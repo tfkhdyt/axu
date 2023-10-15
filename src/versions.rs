@@ -41,7 +41,9 @@ pub fn compare_version(old_version: &str, new_version: &str) -> UpdateType {
 }
 
 pub fn format_version_color(version: &str, update_type: &UpdateType) -> String {
-    let ver_parts = version.split('.').collect::<Vec<&str>>();
+    let ver_parts = version
+        .split(|c| c == '.' || c == '-')
+        .collect::<Vec<&str>>();
 
     match update_type {
         UpdateType::Major => ver_parts.join(".").red().to_string(),
@@ -56,6 +58,11 @@ pub fn format_version_color(version: &str, update_type: &UpdateType) -> String {
             ver_parts[1],
             ver_parts[2..].join(".").bold().green()
         ),
-        UpdateType::Build => ver_parts.join("."),
+        UpdateType::Build => format!(
+            "{}-{}",
+            ver_parts[0..ver_parts.len() - 1].join("."),
+            ver_parts[ver_parts.len() - 1].bold().bright_purple()
+        ),
+        UpdateType::Git => version.to_string(),
     }
 }

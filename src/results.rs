@@ -8,6 +8,7 @@ pub struct UpdateTypeMap {
     pub minor: Vec<String>,
     pub patch: Vec<String>,
     pub build: Vec<String>,
+    pub git: Vec<String>,
 }
 
 pub fn format_result(common_lines: &Vec<String>, update_types: &Vec<UpdateType>) -> UpdateTypeMap {
@@ -20,15 +21,21 @@ pub fn format_result(common_lines: &Vec<String>, update_types: &Vec<UpdateType>)
         let old_version = ln[1];
         let new_version = ln[3];
 
-        let update_type = versions::compare_version(old_version, new_version);
+        let update_type = match package_name.ends_with("-git") {
+            true => UpdateType::Git,
+            false => versions::compare_version(old_version, new_version),
+        };
+
         if !update_types.is_empty() && !update_types.contains(&update_type) {
             continue;
         }
+
         let vec = match update_type {
             UpdateType::Major => &mut update_type_map.major,
             UpdateType::Minor => &mut update_type_map.minor,
             UpdateType::Patch => &mut update_type_map.patch,
             UpdateType::Build => &mut update_type_map.build,
+            UpdateType::Git => &mut update_type_map.git,
         };
         vec.push(format!(
             "{}: {}  {}",
@@ -48,6 +55,7 @@ pub fn print_result(update_type_map: UpdateTypeMap, show_number_only: bool) {
         &update_type_map.minor,
         &update_type_map.patch,
         &update_type_map.build,
+        &update_type_map.git,
     ];
 
     for (idx, update_type) in updates_types.iter().enumerate() {
@@ -60,7 +68,8 @@ pub fn print_result(update_type_map: UpdateTypeMap, show_number_only: bool) {
                         0 => "MAJOR",
                         1 => "MINOR",
                         2 => "PATCH",
-                        _ => "BUILD",
+                        3 => "BUILD",
+                        _ => "GIT",
                     }
                     .bold()
                     .underline(),
