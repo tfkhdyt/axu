@@ -1,6 +1,6 @@
 use colored::*;
 
-use crate::{updates::UpdateType, versions};
+use crate::{updates::UpdateType, versions::Version};
 
 #[derive(Default)]
 pub struct UpdateTypeMap {
@@ -11,79 +11,83 @@ pub struct UpdateTypeMap {
     pub git: Vec<String>,
 }
 
-pub fn format_result(common_lines: &Vec<String>, update_types: &Vec<UpdateType>) -> UpdateTypeMap {
-    let mut update_type_map = UpdateTypeMap::default();
+impl UpdateTypeMap {
+    pub fn new(common_lines: &Vec<String>, update_types: &Vec<UpdateType>) -> Self {
+        let mut update_type_map = UpdateTypeMap::default();
 
-    for line in common_lines {
-        let ln = line.split_whitespace().collect::<Vec<&str>>();
+        for line in common_lines {
+            let ln = line.split_whitespace().collect::<Vec<&str>>();
 
-        let package_name = ln[0];
-        let old_version = ln[1];
-        let new_version = ln[3];
+            let package_name = ln[0];
+            let old_version = Version::new(ln[1]);
+            let new_version = Version::new(ln[3]);
 
-        let update_type = match package_name.ends_with("-git") {
-            true => UpdateType::Git,
-            false => versions::compare_version(old_version, new_version),
-        };
+            let update_type = match package_name.ends_with("-git") {
+                true => UpdateType::Git,
+                false => old_version.get_update_type(&new_version),
+            };
 
-        if !update_types.is_empty() && !update_types.contains(&update_type) {
-            continue;
+            if !update_types.is_empty() && !update_types.contains(&update_type) {
+                continue;
+            }
+
+            let vec = match update_type {
+                UpdateType::Major => &mut update_type_map.major,
+                UpdateType::Minor => &mut update_type_map.minor,
+                UpdateType::Patch => &mut update_type_map.patch,
+                UpdateType::Build => &mut update_type_map.build,
+                UpdateType::Git => &mut update_type_map.git,
+            };
+
+            vec.push(format!(
+                "{}: {}  {}",
+                package_name.bold(),
+                old_version.format_color(&update_type),
+                new_version.format_color(&update_type),
+            ));
         }
 
-        let vec = match update_type {
-            UpdateType::Major => &mut update_type_map.major,
-            UpdateType::Minor => &mut update_type_map.minor,
-            UpdateType::Patch => &mut update_type_map.patch,
-            UpdateType::Build => &mut update_type_map.build,
-            UpdateType::Git => &mut update_type_map.git,
-        };
-        vec.push(format!(
-            "{}: {}  {}",
-            package_name.bold(),
-            versions::format_version_color(old_version, &update_type),
-            versions::format_version_color(new_version, &update_type)
-        ));
+        update_type_map
     }
 
-    update_type_map
-}
+    pub fn print(&self, print_number_only: bool) {
+        let mut number_of_updates = 0;
 
-pub fn print_result(update_type_map: UpdateTypeMap, show_number_only: bool) {
-    let mut number_of_updates = 0;
-    let updates_types = [
-        &update_type_map.major,
-        &update_type_map.minor,
-        &update_type_map.patch,
-        &update_type_map.build,
-        &update_type_map.git,
-    ];
+        let updates_types = [
+            &self.major,
+            &self.minor,
+            &self.patch,
+            &self.build,
+            &self.git,
+        ];
 
-    for (idx, update_type) in updates_types.iter().enumerate() {
-        if !update_type.is_empty() {
-            number_of_updates += update_type.len();
-            if !show_number_only {
-                println!(
-                    "{} ({})",
-                    match idx {
-                        0 => "MAJOR",
-                        1 => "MINOR",
-                        2 => "PATCH",
-                        3 => "BUILD",
-                        _ => "GIT",
-                    }
-                    .bold()
-                    .underline(),
-                    update_type.len().to_string().bright_green(),
-                );
-                update_type.iter().for_each(|it| println!("{}", it));
-                println!();
+        for (idx, update_type) in updates_types.iter().enumerate() {
+            if !update_type.is_empty() {
+                number_of_updates += update_type.len();
+                if !print_number_only {
+                    println!(
+                        "{} ({})",
+                        match idx {
+                            0 => "MAJOR",
+                            1 => "MINOR",
+                            2 => "PATCH",
+                            3 => "BUILD",
+                            _ => "GIT",
+                        }
+                        .bold()
+                        .underline(),
+                        update_type.len().to_string().bright_green(),
+                    );
+                    update_type.iter().for_each(|it| println!("{}", it));
+                    println!();
+                }
             }
         }
-    }
 
-    if show_number_only {
-        println!("{}", number_of_updates)
-    } else {
-        println!("{} {}", "Total updates:".bold(), number_of_updates);
+        if print_number_only {
+            println!("{}", number_of_updates)
+        } else {
+            println!("{} {}", "Total updates:".bold(), number_of_updates);
+        }
     }
 }

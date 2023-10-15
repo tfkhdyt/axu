@@ -8,23 +8,24 @@ mod versions;
 use std::process;
 
 use clap::{CommandFactory, Parser};
-use spinners::{Spinner, Spinners};
+use spinners::{Spinner, Spinners::Pong};
 
 use crate::{
-    cli::Commands,
+    cli::{Cli, Commands},
+    results::UpdateTypeMap,
     utils::{completions, fmt, lines},
 };
 
 fn main() {
-    let cli = cli::Cli::parse();
+    let cli = Cli::parse();
 
     if let Some(Commands::Completion { shell }) = &cli.command {
-        let mut cmd = cli::Cli::command();
+        let mut cmd = Cli::command();
         completions::print_completions(*shell, &mut cmd);
         process::exit(0);
     }
 
-    let mut sp = Spinner::new(Spinners::Pong, "Loading".into());
+    let mut sp = Spinner::new(Pong, "Loading".into());
 
     let (all_updates, explicit_packages) =
         rayon::join(updates::get_all_updates, packages::get_explicit_packages);
@@ -47,10 +48,10 @@ fn main() {
     };
 
     let common_lines = lines::get_common_lines(all_updates, explicit_packages);
-    let result = results::format_result(&common_lines, &cli.update_type);
+    let update_type_map = UpdateTypeMap::new(&common_lines, &cli.update_type);
 
     sp.stop();
     print!("\x1b[2K\r");
 
-    results::print_result(result, cli.number);
+    update_type_map.print(cli.number_only);
 }

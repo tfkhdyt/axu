@@ -3,66 +3,66 @@ use colored::*;
 use crate::updates::{self, UpdateType};
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-struct Version {
+pub struct Version<'a> {
     major: u32,
     minor: u32,
     patch: u32,
     build: String,
+    parts: Vec<&'a str>,
+    raw: &'a str,
 }
 
-fn get_version_parts(version: &str) -> Version {
-    let parts: Vec<&str> = version.split(|c| c == '.' || c == '-').collect();
-    let major = parts[0].parse().unwrap_or(0);
-    let minor = parts.get(1).map_or(0, |v| v.parse().unwrap_or(0));
-    let patch = parts.get(2).map_or(0, |v| v.parse().unwrap_or(0));
-    let build = parts.get(3).map_or("", |v| *v).to_string();
+impl<'a> Version<'a> {
+    pub fn new(version: &'a str) -> Self {
+        let parts: Vec<&'a str> = version.split(|c| c == '.' || c == '-').collect();
 
-    Version {
-        major,
-        minor,
-        patch,
-        build,
+        let major = parts[0].parse().unwrap_or(0);
+        let minor = parts.get(1).map_or(0, |v| v.parse().unwrap_or(0));
+        let patch = parts.get(2).map_or(0, |v| v.parse().unwrap_or(0));
+        let build = parts.get(3).map_or("", |v| *v).to_string();
+
+        Version {
+            major,
+            minor,
+            patch,
+            build,
+            parts,
+            raw: version,
+        }
     }
-}
 
-pub fn compare_version(old_version: &str, new_version: &str) -> UpdateType {
-    let old_parts = get_version_parts(old_version);
-    let new_parts = get_version_parts(new_version);
-
-    if old_parts.major != new_parts.major {
-        updates::UpdateType::Major
-    } else if old_parts.minor != new_parts.minor {
-        updates::UpdateType::Minor
-    } else if old_parts.patch != new_parts.patch {
-        updates::UpdateType::Patch
-    } else {
-        updates::UpdateType::Build
+    pub fn get_update_type(&self, new_version: &Self) -> UpdateType {
+        if self.major != new_version.major {
+            updates::UpdateType::Major
+        } else if self.minor != new_version.minor {
+            updates::UpdateType::Minor
+        } else if self.patch != new_version.patch {
+            updates::UpdateType::Patch
+        } else {
+            updates::UpdateType::Build
+        }
     }
-}
 
-pub fn format_version_color(version: &str, update_type: &UpdateType) -> String {
-    let ver_parts = version
-        .split(|c| c == '.' || c == '-')
-        .collect::<Vec<&str>>();
-
-    match update_type {
-        UpdateType::Major => ver_parts.join(".").red().to_string(),
-        UpdateType::Minor => format!(
-            "{}.{}",
-            ver_parts[0],
-            &ver_parts[1..].join(".").bold().yellow()
-        ),
-        UpdateType::Patch => format!(
-            "{}.{}.{}",
-            ver_parts[0],
-            ver_parts[1],
-            ver_parts[2..].join(".").bold().green()
-        ),
-        UpdateType::Build => format!(
-            "{}-{}",
-            ver_parts[0..ver_parts.len() - 1].join("."),
-            ver_parts[ver_parts.len() - 1].bold().bright_purple()
-        ),
-        UpdateType::Git => version.to_string(),
+    pub fn format_color(&self, update_type: &UpdateType) -> String {
+        match update_type {
+            UpdateType::Major => self.parts.join(".").red().to_string(),
+            UpdateType::Minor => format!(
+                "{}.{}",
+                self.parts[0],
+                &self.parts[1..].join(".").bold().yellow()
+            ),
+            UpdateType::Patch => format!(
+                "{}.{}.{}",
+                self.parts[0],
+                self.parts[1],
+                self.parts[2..].join(".").bold().green()
+            ),
+            UpdateType::Build => format!(
+                "{}-{}",
+                self.parts[0..self.parts.len() - 1].join("."),
+                self.parts[self.parts.len() - 1].bold().bright_purple()
+            ),
+            UpdateType::Git => self.raw.to_string(),
+        }
     }
 }

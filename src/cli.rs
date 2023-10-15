@@ -6,12 +6,12 @@ use crate::updates::UpdateType;
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
-    /// Show only specified update type
+    /// Show only specified update types
     pub update_type: Vec<UpdateType>,
 
-    /// Show number of updates only
-    #[arg(short, long)]
-    pub number: bool,
+    /// Print number of updates only
+    #[arg(short = 'n', long = "number")]
+    pub number_only: bool,
 
     #[command(subcommand)]
     pub command: Option<Commands>,
