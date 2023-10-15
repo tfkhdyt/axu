@@ -3,7 +3,7 @@ permissions:
 on:
   push:
     tags:
-      - '*'
+      - "*"
 jobs:
   create-release:
     runs-on: ubuntu-latest
@@ -36,7 +36,7 @@ jobs:
       - name: Publish AUR package
         uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
         with:
-          pkgname: axu
+          pkgname: axu-bin
           pkgbuild: ./PKGBUILD
           commit_username: ${{ secrets.AUR_USERNAME }}
           commit_email: ${{ secrets.AUR_EMAIL }}
