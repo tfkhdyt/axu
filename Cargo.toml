@@ -4,12 +4,13 @@ version = "1.3.1"
 authors = ["Taufik Hidayat <tfkhdyt@proton.me>"]
 description = "A cli tool to check your Arch Linux explicitly installed packages updates"
 edition = "2021"
+licence = "GPL-3.0-only"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [profile.release]
-strip = true  # Automatically strip symbols from the binary.
-opt-level = "z"  # Optimize for size.
+strip = true      # Automatically strip symbols from the binary.
+opt-level = "z"   # Optimize for size.
 lto = true
 codegen-units = 1
 panic = "abort"
