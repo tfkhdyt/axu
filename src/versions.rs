@@ -60,7 +60,7 @@ impl<'a> Version<'a> {
             UpdateType::Build => format!(
                 "{}-{}",
                 self.parts[0..self.parts.len() - 1].join("."),
-                self.parts[self.parts.len() - 1].bold().bright_purple()
+                self.parts[self.parts.len() - 1].bold().blue()
             ),
             UpdateType::Git => self.raw.to_string(),
         }
