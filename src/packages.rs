@@ -1,12 +1,13 @@
-use std::io;
+use anyhow::Context;
 
-use crate::utils::parsing;
-
-pub fn get_explicit_packages() -> io::Result<Vec<String>> {
+pub fn get_explicit_packages() -> anyhow::Result<Vec<String>> {
     let explicit_packages = duct::cmd!("yay", "-Qe")
         .pipe(duct::cmd!("awk", "-F", " ", "{print $1}"))
-        .read()?;
-    let splited_packages =
-        parsing::vec_str_to_vec_string(explicit_packages.split('\n').collect::<Vec<&str>>());
+        .read()
+        .context("failed to get explicit packages")?;
+    let splited_packages: Vec<String> = explicit_packages
+        .split('\n')
+        .map(|s| s.to_owned())
+        .collect();
     Ok(splited_packages)
 }
