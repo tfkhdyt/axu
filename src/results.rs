@@ -12,7 +12,7 @@ pub struct UpdateTypeMap {
 }
 
 impl UpdateTypeMap {
-    pub fn new(common_lines: &Vec<String>, update_types: &Vec<UpdateType>) -> Self {
+    pub fn new(common_lines: &[String], update_types: &[UpdateType]) -> Self {
         let mut update_type_map = UpdateTypeMap::default();
 
         for line in common_lines {
