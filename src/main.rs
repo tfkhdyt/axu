@@ -13,7 +13,7 @@ use spinners::{Spinner, Spinners::Pong};
 use crate::{
     cli::{Cli, Commands},
     results::UpdateTypeMap,
-    utils::{completions, fmt, lines},
+    utils::{completions, lines},
 };
 
 fn main() {
@@ -35,7 +35,8 @@ fn main() {
         Err(err) => {
             sp.stop();
             print!("\x1b[2K\r");
-            fmt::fatalln("failed to get all updates", Some(&err))
+            eprintln!("Error: {}", err);
+            process::exit(1);
         }
     };
     let explicit_packages = match explicit_packages {
@@ -43,11 +44,12 @@ fn main() {
         Err(err) => {
             sp.stop();
             print!("\x1b[2K\r");
-            fmt::fatalln("failed to get explicit packages", Some(&err))
+            eprintln!("Error: {}", err);
+            process::exit(1);
         }
     };
 
-    let common_lines = lines::get_common_lines(all_updates, explicit_packages);
+    let common_lines = lines::get_common_lines(&all_updates, &explicit_packages);
     let update_type_map = UpdateTypeMap::new(&common_lines, &cli.update_type);
 
     sp.stop();
