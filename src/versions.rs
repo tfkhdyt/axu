@@ -3,23 +3,26 @@ use colored::*;
 use crate::updates::{self, UpdateType};
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Version<'a> {
+pub struct Version {
     major: u32,
     minor: u32,
     patch: u32,
     build: String,
-    parts: Vec<&'a str>,
-    raw: &'a str,
+    parts: Vec<String>,
+    raw: String,
 }
 
-impl<'a> Version<'a> {
-    pub fn new(version: &'a str) -> Self {
-        let parts: Vec<&'a str> = version.split(|c| c == '.' || c == '-').collect();
+impl Version {
+    pub fn new(version: &str) -> Self {
+        let parts: Vec<String> = version
+            .split(|c| c == '.' || c == '-')
+            .map(|p| p.to_owned())
+            .collect();
 
         let major = parts[0].parse().unwrap_or(0);
         let minor = parts.get(1).map_or(0, |v| v.parse().unwrap_or(0));
         let patch = parts.get(2).map_or(0, |v| v.parse().unwrap_or(0));
-        let build = parts.get(3).map_or("", |v| *v).to_string();
+        let build = parts.get(3).map_or("", |v| v).to_owned();
 
         Version {
             major,
@@ -27,7 +30,7 @@ impl<'a> Version<'a> {
             patch,
             build,
             parts,
-            raw: version,
+            raw: version.to_owned(),
         }
     }
 
