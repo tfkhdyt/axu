@@ -1,6 +1,6 @@
 use rayon::prelude::*;
 
-pub fn get_common_lines(left: Vec<String>, right: Vec<String>) -> Vec<String> {
+pub fn get_common_lines(left: &[String], right: &[String]) -> Vec<String> {
     let common_lines: Vec<String> = left
         .par_iter()
         .filter_map(|x| {
