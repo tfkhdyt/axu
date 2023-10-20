@@ -1,4 +1,7 @@
+use std::{thread, time::Duration};
+
 use colored::*;
+use indicatif::ProgressBar;
 
 use crate::{updates::UpdateType, versions::Version};
 
@@ -12,7 +15,8 @@ pub struct UpdateTypeMap {
 }
 
 impl UpdateTypeMap {
-    pub fn new(common_lines: &[String], update_types: &[UpdateType]) -> Self {
+    pub fn new(common_lines: &[String], update_types: &[UpdateType], pb: &ProgressBar) -> Self {
+        pb.set_message("determining the type of update");
         let mut update_type_map = UpdateTypeMap::default();
 
         for line in common_lines {
@@ -46,6 +50,8 @@ impl UpdateTypeMap {
                 new_version.format_color(&update_type),
             ));
         }
+        pb.inc(1);
+        thread::sleep(Duration::from_millis(100));
 
         update_type_map
     }

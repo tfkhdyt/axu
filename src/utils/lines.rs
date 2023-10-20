@@ -1,6 +1,10 @@
+use std::{thread, time::Duration};
+
+use indicatif::ProgressBar;
 use rayon::prelude::*;
 
-pub fn get_common_lines(left: &[String], right: &[String]) -> Vec<String> {
+pub fn get_common_lines(left: &[String], right: &[String], pb: &ProgressBar) -> Vec<String> {
+    pb.set_message("fetch explicit updates");
     let common_lines: Vec<String> = left
         .par_iter()
         .filter_map(|x| {
@@ -16,6 +20,8 @@ pub fn get_common_lines(left: &[String], right: &[String]) -> Vec<String> {
             }
         })
         .collect();
+    pb.inc(1);
+    thread::sleep(Duration::from_millis(100));
 
     common_lines
 }

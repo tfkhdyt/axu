@@ -1,6 +1,10 @@
-use anyhow::Context;
+use std::{thread, time::Duration};
 
-pub fn get_explicit_packages() -> anyhow::Result<Vec<String>> {
+use anyhow::Context;
+use indicatif::ProgressBar;
+
+pub fn get_explicit_packages(pb: &ProgressBar) -> anyhow::Result<Vec<String>> {
+    pb.set_message("fetch explicit packages");
     let explicit_packages = duct::cmd!("yay", "-Qe")
         .pipe(duct::cmd!("awk", "-F", " ", "{print $1}"))
         .read()
@@ -9,5 +13,8 @@ pub fn get_explicit_packages() -> anyhow::Result<Vec<String>> {
         .split('\n')
         .map(|s| s.to_owned())
         .collect();
+    pb.inc(1);
+    thread::sleep(Duration::from_millis(100));
+
     Ok(splited_packages)
 }

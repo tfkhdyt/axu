@@ -1,5 +1,6 @@
 use anyhow::Context;
 use clap::ValueEnum;
+use indicatif::ProgressBar;
 
 #[derive(ValueEnum, Clone, PartialEq, PartialOrd)]
 pub enum UpdateType {
@@ -10,25 +11,29 @@ pub enum UpdateType {
     Git,
 }
 
-pub fn get_all_updates() -> anyhow::Result<Vec<String>> {
+pub fn get_all_updates(pb: &ProgressBar) -> anyhow::Result<Vec<String>> {
     let (arch_updates, aur_updates) = rayon::join(
-        || -> anyhow::Result<_> {
-            duct::cmd!("checkupdates")
+        || -> anyhow::Result<String> {
+            pb.set_message("fetching arch linux updates");
+            let result = duct::cmd!("checkupdates")
                 .read()
-                .context("failed to get Arch Linux updates")
+                .context("failed to get Arch Linux updates")?;
+            pb.inc(1);
+            Ok(result)
         },
-        || -> anyhow::Result<_> {
-            duct::cmd!("yay", "-Qua")
+        || -> anyhow::Result<String> {
+            pb.set_message("fetching aur updates");
+            let result = duct::cmd!("yay", "-Qua")
                 .unchecked()
                 .read()
-                .context("failed to get AUR updates")
+                .context("failed to get AUR updates")?;
+            pb.inc(1);
+            Ok(result)
         },
     );
 
     let all_updates = format!("{}\n{}", arch_updates?, aur_updates?);
-
     let mut splited_vec: Vec<String> = all_updates.split('\n').map(|s| s.to_owned()).collect();
-
     splited_vec.sort();
 
     Ok(splited_vec)

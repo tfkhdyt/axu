@@ -8,7 +8,7 @@ mod versions;
 use std::process;
 
 use clap::{CommandFactory, Parser};
-use spinners::{Spinner, Spinners::Pong};
+use indicatif::{ProgressBar, ProgressStyle};
 
 use crate::{
     cli::{Cli, Commands},
@@ -25,16 +25,22 @@ fn main() {
         process::exit(0);
     }
 
-    let mut sp = Spinner::new(Pong, "Loading".into());
+    let pb = ProgressBar::new(5);
+    pb.set_style(
+        ProgressStyle::with_template("{elapsed_precise} [{bar:30.green/white}] {percent:<1}% ")
+            .unwrap()
+            .progress_chars("-C∘"),
+    );
 
-    let (all_updates, explicit_packages) =
-        rayon::join(updates::get_all_updates, packages::get_explicit_packages);
+    let (all_updates, explicit_packages) = rayon::join(
+        || updates::get_all_updates(&pb),
+        || packages::get_explicit_packages(&pb),
+    );
 
     let all_updates = match all_updates {
         Ok(v) => v,
         Err(err) => {
-            sp.stop();
-            print!("\x1b[2K\r");
+            pb.finish_and_clear();
             eprintln!("Error: {}", err);
             process::exit(1);
         }
@@ -42,18 +48,16 @@ fn main() {
     let explicit_packages = match explicit_packages {
         Ok(v) => v,
         Err(err) => {
-            sp.stop();
-            print!("\x1b[2K\r");
+            pb.finish_and_clear();
             eprintln!("Error: {}", err);
             process::exit(1);
         }
     };
 
-    let common_lines = lines::get_common_lines(&all_updates, &explicit_packages);
-    let update_type_map = UpdateTypeMap::new(&common_lines, &cli.update_type);
+    let common_lines = lines::get_common_lines(&all_updates, &explicit_packages, &pb);
+    let update_type_map = UpdateTypeMap::new(&common_lines, &cli.update_type, &pb);
 
-    sp.stop();
-    print!("\x1b[2K\r");
+    pb.finish_and_clear();
 
     update_type_map.print(cli.number_only);
 }
