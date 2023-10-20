@@ -27,7 +27,7 @@ fn main() {
 
     let pb = ProgressBar::new(5);
     pb.set_style(
-        ProgressStyle::with_template("{elapsed_precise} [{bar:30.green/white}] {percent:<1}% ")
+        ProgressStyle::with_template("[{wide_bar:.yellow/white}] {percent:<1}% ")
             .unwrap()
             .progress_chars("-C∘"),
     );
