@@ -1,5 +1,3 @@
-use std::{thread, time::Duration};
-
 use anyhow::Context;
 use indicatif::ProgressBar;
 
@@ -14,7 +12,6 @@ pub fn get_explicit_packages(pb: &ProgressBar) -> anyhow::Result<Vec<String>> {
         .map(|s| s.to_owned())
         .collect();
     pb.inc(1);
-    thread::sleep(Duration::from_millis(100));
 
     Ok(splited_packages)
 }

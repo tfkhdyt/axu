@@ -1,5 +1,3 @@
-use std::{thread, time::Duration};
-
 use colored::*;
 use indicatif::ProgressBar;
 
@@ -51,7 +49,6 @@ impl UpdateTypeMap {
             ));
         }
         pb.inc(1);
-        thread::sleep(Duration::from_millis(100));
 
         update_type_map
     }
