@@ -16,6 +16,7 @@ pub fn get_all_updates(pb: &ProgressBar) -> anyhow::Result<Vec<String>> {
         || -> anyhow::Result<String> {
             pb.set_message("fetching arch linux updates");
             let result = duct::cmd!("checkupdates")
+                .unchecked()
                 .read()
                 .context("failed to get Arch Linux updates")?;
             pb.inc(1);
