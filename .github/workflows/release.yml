@@ -32,6 +32,7 @@ jobs:
           # (required) GitHub token for uploading assets to GitHub Releases.
           token: ${{ secrets.GITHUB_TOKEN }}
   aur-publish:
+    if: '!cancelled()'
     needs:
       - upload-assets
     runs-on: ubuntu-latest
