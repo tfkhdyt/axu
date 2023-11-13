@@ -44,7 +44,7 @@ impl UpdateTypeMap {
             vec.push(format!(
                 "{}: {}  {}",
                 package_name.bold(),
-                old_version.format_color(&update_type),
+                old_version.raw,
                 new_version.format_color(&update_type),
             ));
         }

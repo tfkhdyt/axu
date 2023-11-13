@@ -4,31 +4,31 @@ use crate::updates::{self, UpdateType};
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Version {
-    major: u32,
-    minor: u32,
-    patch: u32,
+    major: Option<String>,
+    minor: Option<String>,
+    patch: Option<String>,
     build: String,
     parts: Vec<String>,
-    raw: String,
+    pub raw: String,
 }
 
 impl Version {
     pub fn new(version: &str) -> Self {
-        let parts: Vec<String> = version
+        let mut parts: Vec<String> = version
             .split(|c| c == '.' || c == '-')
             .map(|p| p.to_owned())
             .collect();
-
-        let major = parts[0].parse().unwrap_or(0);
-        let minor = parts.get(1).map_or(0, |v| v.parse().unwrap_or(0));
-        let patch = parts.get(2).map_or(0, |v| v.parse().unwrap_or(0));
-        let build = parts.get(3).map_or("", |v| v).to_owned();
+        let pkgrel = parts.pop().unwrap_or("1".to_owned());
 
         Version {
-            major,
-            minor,
-            patch,
-            build,
+            major: parts.get(0).cloned(),
+            minor: parts.get(1).cloned(),
+            patch: if !parts[2..].is_empty() {
+                Some(parts[2..].join("."))
+            } else {
+                None
+            },
+            build: pkgrel,
             parts,
             raw: version.to_owned(),
         }
@@ -48,24 +48,29 @@ impl Version {
 
     pub fn format_color(&self, update_type: &UpdateType) -> String {
         match update_type {
-            UpdateType::Major => self.parts.join(".").red().to_string(),
+            // UpdateType::Major => self.parts.join(".").red().to_string(),
+            UpdateType::Major => format!("{}-{}", self.parts.join("."), self.build)
+                .red()
+                .to_string(),
             UpdateType::Minor => format!(
-                "{}.{}",
+                "{}.{}{}{}",
                 self.parts[0],
-                &self.parts[1..].join(".").bold().yellow()
+                self.parts[1..].join(".").bold().yellow(),
+                "-".bold().yellow(),
+                self.build.bold().yellow()
             ),
             UpdateType::Patch => format!(
-                "{}.{}.{}",
+                "{}.{}.{}{}{}",
                 self.parts[0],
                 self.parts[1],
-                self.parts[2..].join(".").bold().green()
+                self.parts[2..].join(".").bold().green(),
+                "-".bold().green(),
+                self.build.bold().green()
             ),
-            UpdateType::Build => format!(
-                "{}-{}",
-                self.parts[0..self.parts.len() - 1].join("."),
-                self.parts[self.parts.len() - 1].bold().blue()
-            ),
-            UpdateType::Git => self.raw.to_string(),
+            UpdateType::Build => {
+                format!("{}-{}", self.parts[0..].join("."), self.build.bold().blue())
+            }
+            UpdateType::Git => self.raw.to_owned(),
         }
     }
 }
