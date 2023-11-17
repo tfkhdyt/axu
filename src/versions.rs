@@ -23,7 +23,7 @@ impl Version {
         Version {
             major: parts.get(0).cloned(),
             minor: parts.get(1).cloned(),
-            patch: if !parts[2..].is_empty() {
+            patch: if parts.len() > 2 && !parts[2..].is_empty() {
                 Some(parts[2..].join("."))
             } else {
                 None
