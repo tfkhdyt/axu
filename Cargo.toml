@@ -1,6 +1,6 @@
 [package]
 name = "axu"
-version = "1.5.5"
+version = "1.5.6"
 authors = ["Taufik Hidayat <tfkhdyt@proton.me>"]
 description = "A cli tool to check your Arch Linux explicitly installed packages updates"
 edition = "2021"

@@ -15,7 +15,7 @@ pub fn get_all_updates(pb: &ProgressBar) -> anyhow::Result<Vec<String>> {
     let (arch_updates, aur_updates) = rayon::join(
         || -> anyhow::Result<String> {
             pb.set_message("fetching arch linux updates");
-            let result = duct::cmd!("checkupdates")
+            let result = duct::cmd!("checkupdates", "--nocolor")
                 .unchecked()
                 .read()
                 .context("failed to get Arch Linux updates")?;
